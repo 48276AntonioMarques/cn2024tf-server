@@ -1,9 +1,12 @@
 package pt.isel.leic.cn.server;
 
+import pt.isel.leic.cn.server.service.PublishService;
+
 public class ShutdownHook extends Thread {
     io.grpc.Server svc;
+    PublishService publishService;
 
-    public ShutdownHook(io.grpc.Server svc) {
+    public ShutdownHook(io.grpc.Server svc, PublishService publishService) {
         this.svc = svc;
     }
 
@@ -15,6 +18,7 @@ public class ShutdownHook extends Thread {
             // but new calls are rejected. So we can clean and finish work
             svc.shutdown();
             svc.awaitTermination();
+            publishService.shutdown();
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
         }
